@@ -33,12 +33,28 @@ RSpec.describe 'bulk discount index' do
     expect(page).to_not have_content(@five.threshold)
   end
 
-  it 'has links next to each discount that lead to the discounts show page' do
+  it 'has links next to each discount' do
     visit "/merchants/#{@billman.id}/bulk_discounts"
 
     expect(page.all('.discountDetails')[0]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[1]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[2]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[3]).to eq(nil)
+  end
+
+  it 'has links that lead to indiv show pages next to discounts' do
+    visit "/merchants/#{@billman.id}/bulk_discounts"
+
+    within page.all('.discountDetails')[0] do
+      click_link("View This Discount")
+      expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
+    end
+
+    visit "/merchants/#{@billman.id}/bulk_discounts"
+
+    within page.all('.discountDetails')[2] do
+      click_link("View This Discount")
+      expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@fifty.id}")
+    end
   end
 end
