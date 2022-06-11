@@ -19,7 +19,7 @@ RSpec.describe 'New bulk discount page' do
     expect(page).to have_button("Create New Discount")
   end
 
-  it 'will redirect to the discount index when submitted' do
+  it 'will redirect to the discount index when submitted, and show new entry' do
     visit "/merchants/#{@billman.id}/bulk_discounts/new"
 
     fill_in :percentage, with: '0.60'
