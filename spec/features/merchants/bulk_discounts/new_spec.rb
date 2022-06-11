@@ -25,5 +25,9 @@ RSpec.describe 'New bulk discount page' do
     fill_in :percentage, with: '0.60'
     fill_in :threshold, with: '100.0'
     click_button("Create New Discount")
+
+    expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/")
+    expect(page).to have_content("60.0% off")
+    expect(page).to have_content("at 100 items")
   end
 end
