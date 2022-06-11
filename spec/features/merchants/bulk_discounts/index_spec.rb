@@ -1,4 +1,5 @@
 require 'rails_helper'
+#save_and_open_page
 
 RSpec.describe 'bulk discount index' do
   before(:each) do
@@ -30,5 +31,14 @@ RSpec.describe 'bulk discount index' do
     expect(page).to have_content(@fifty.threshold)
 
     expect(page).to_not have_content(@five.threshold)
+  end
+
+  it 'has links next to each discount that lead to the discounts show page' do
+    visit "/merchants/#{@billman.id}/bulk_discounts"
+
+    expect(page.all('.discountDetails')[0]).to have_link("View This Discount")
+    expect(page.all('.discountDetails')[1]).to have_link("View This Discount")
+    expect(page.all('.discountDetails')[2]).to have_link("View This Discount")
+    expect(page.all('.discountDetails')[3]).to eq(nil)
   end
 end
