@@ -19,7 +19,7 @@ RSpec.describe 'Merchant Show Dash' do
     @invoice1 = @brenda.invoices.create!(status: "in progress")
     @invoice2 = @brenda.invoices.create!(status: "completed")
     @invoice3 = @jimbob.invoices.create!(status: "completed")
-    @invoice4= @jimbob.invoices.create!(status: "completed")
+    @invoice4 = @jimbob.invoices.create!(status: "completed")
     @invoice5 = @jimbob.invoices.create!(status: "completed")
     @invoice6 = @casey.invoices.create!(status: "completed")
     @invoice7 = @nick.invoices.create!(status: "completed")
@@ -128,5 +128,13 @@ RSpec.describe 'Merchant Show Dash' do
         expect(page).to have_content("Casey Zafio")
       end
     end
+  end
+  it 'has a link to visit that merchants discount index' do
+    visit "/merchants/#{@billman.id}/dashboard"
+
+    expect(page).to have_link("View Discounts")
+    click_link("View Discounts")
+
+    expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts")
   end
 end
