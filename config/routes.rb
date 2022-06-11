@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get "/merchants/:merchant_id/dashboard", to: "merchants#show"
 
+  get "/merchants/:merchant_id/bulk_discounts", to: "bulk_discounts#index"
+
   get "/merchants/:merchant_id/items", to: "merchant_items#index"
   get "/merchants/:merchant_id/items/new", to: "merchant_items#new"
   post "/merchants/:merchant_id/items", to: "merchant_items#create"

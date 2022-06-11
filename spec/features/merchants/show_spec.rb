@@ -133,8 +133,8 @@ RSpec.describe 'Merchant Show Dash' do
     visit "/merchants/#{@billman.id}/dashboard"
 
     expect(page).to have_link("View Discounts")
-
     click_link("View Discounts")
+
     expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts")
   end
 end
