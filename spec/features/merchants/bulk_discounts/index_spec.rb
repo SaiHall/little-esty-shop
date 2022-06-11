@@ -14,7 +14,7 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'lists all of a merchants bulk discounts percentages (formatted)' do
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     expect(page).to have_content(@ten.percentage * 100)
     expect(page).to have_content(@twenty.percentage * 100)
@@ -24,7 +24,7 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'lists all of a merchants bulk discounts thresholds' do
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     expect(page).to have_content(@ten.threshold)
     expect(page).to have_content(@twenty.threshold)
@@ -34,7 +34,7 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has links next to each discount' do
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     expect(page.all('.discountDetails')[0]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[1]).to have_link("View This Discount")
@@ -43,14 +43,14 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has links that lead to indiv show pages next to discounts' do
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     within page.all('.discountDetails')[0] do
       click_link("View This Discount")
       expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
     end
 
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     within page.all('.discountDetails')[2] do
       click_link("View This Discount")
@@ -59,7 +59,7 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has a link to create a new discount' do
-    visit "/merchants/#{@billman.id}/bulk_discounts"
+    visit merchant_bulk_discounts_path(@billman)
 
     expect(page).to have_link("Create New Discount")
     click_link("Create New Discount")

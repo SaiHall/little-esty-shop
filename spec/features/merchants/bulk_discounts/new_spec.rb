@@ -13,14 +13,14 @@ RSpec.describe 'New bulk discount page' do
   end
 
   it 'has a form for creating a new discount' do
-    visit "/merchants/#{@billman.id}/bulk_discounts/new"
+    visit new_merchant_bulk_discount_path(@billman)
     expect(page).to have_field(:percentage)
     expect(page).to have_field(:threshold)
     expect(page).to have_button("Create New Discount")
   end
 
   it 'will redirect to the discount index when submitted, and show new entry' do
-    visit "/merchants/#{@billman.id}/bulk_discounts/new"
+    visit new_merchant_bulk_discount_path(@billman)
 
     fill_in :percentage, with: '0.60'
     fill_in :threshold, with: '100.0'
