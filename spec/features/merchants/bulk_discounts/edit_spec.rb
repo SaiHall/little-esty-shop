@@ -19,4 +19,38 @@ RSpec.describe 'bulk discount edit page' do
     expect(page).to have_field(:threshold, with: 30)
     expect(page).to have_button("Submit")
   end
+
+  it 'can update the discount percentage when submitted' do
+    visit edit_merchant_bulk_discount_path(@billman, @fifty)
+
+    fill_in(:percentage, with: 0.40)
+    click_button("Submit")
+
+    expect(page).to have_current_path(merchant_bulk_discount_path(@billman, @fifty))
+    expect(page).to have_content("40.0")
+    expect(page).to have_content(@fifty.threshold)
+  end
+
+  it 'can update the discount threshold when submitted' do
+    visit edit_merchant_bulk_discount_path(@billman, @fifty)
+
+    fill_in(:threshold, with: 100)
+    click_button("Submit")
+
+    expect(page).to have_current_path(merchant_bulk_discount_path(@billman, @fifty))
+    expect(page).to have_content(@fifty.percentage * 100)
+    expect(page).to have_content("100")
+  end
+
+  it 'can update both threshold and percentage when submitted' do
+    visit edit_merchant_bulk_discount_path(@billman, @fifty)
+
+    fill_in(:percentage, with: 0.40)
+    fill_in(:threshold, with: 100)
+    click_button("Submit")
+
+    expect(page).to have_current_path(merchant_bulk_discount_path(@billman, @fifty))
+    expect(page).to have_content("40.0")
+    expect(page).to have_content("100")
+  end
 end
