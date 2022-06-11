@@ -17,5 +17,21 @@ RSpec.describe 'bulk discount show' do
 
     expect(page).to have_content(@fifty.percentage * 100)
     expect(page).to have_content(@fifty.threshold)
+    expect(page).to_not have_content(@five.percentage * 100)
+    expect(page).to_not have_content(@five.threshold)
+  end
+
+  it 'has a link to edit the discount' do
+    visit merchant_bulk_discount_path(@billman, @fifty)
+
+    expect(page).to have_link("Edit Discount")
+  end
+
+  it 'directs the user to the edit page when the edit link is clicked' do
+    visit merchant_bulk_discount_path(@billman, @fifty)
+
+    click_link("Edit Discount")
+
+    expect(page).to have_current_path(edit_merchant_bulk_discount_path(@billman, @fifty))
   end
 end
