@@ -1,6 +1,6 @@
 <h1>Bulk Discounts</h1>
 <ul>
 <% @merchant.bulk_discounts.each do |bulk| %>
-  <li><%= "Discount: #{bulk.percentage * 100}% off, at #{bulk.threshold} items of the same type" %></li>
+  <li class='discountDetails'><%= "Discount: #{bulk.percentage * 100}% off, at #{bulk.threshold} items of the same type"%><%= link_to "View This Discount", "/merchants/#{@merchant.id}/bulk_discounts/#{bulk.id}" %></li>
   <% end %>
 </ul>
