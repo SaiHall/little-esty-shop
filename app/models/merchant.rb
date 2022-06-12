@@ -30,7 +30,7 @@ class Merchant < ApplicationRecord
   end
 
   def discounted_revenue(invoice)
-    my_total_revenue(invoice) - invoice_items.discounted_difference
+    my_total_revenue(invoice) - invoice_items.where(invoice_items: {invoice_id: invoice.id}).discounted_difference
   end
 
   # def discounted_revenue
