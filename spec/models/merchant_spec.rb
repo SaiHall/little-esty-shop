@@ -195,5 +195,18 @@ RSpec.describe Merchant, type: :model do
       expect(@billman.fave_customers).to eq([@brenda, parker, nick, chris, sai])
       expect(@billman.fave_customers).to_not eq([deannah])
     end
+
+    it 'can return a discounted total revenue' do
+      billman = Merchant.create!(name: "Billman")
+      bracelet = billman.items.create!(name: "Bracelet", description: "shiny", unit_price: 1001)
+      mood = billman.items.create!(name: "Mood Ring", description: "Moody", unit_price: 2002)
+      brenda = Customer.create!(first_name: "Brenda", last_name: "Bhoddavista")
+      invoice1 = brenda.invoices.create!(status: "In Progress")
+      order1 = bracelet.invoice_items.create!(quantity: 9, unit_price: 1001, status: "Pending", invoice_id: invoice1.id) #90.09
+      order2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Packaged", invoice_id: invoice1.id) #200.2 - 40.04 = 160.16
+      billman.bulk_discounts.create!(percentage: 0.20, threshold: 10)
+
+      expect(billman.discounted_revenue(invoice1)).to eq(250.25)
+    end
   end
 end
