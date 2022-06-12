@@ -30,6 +30,8 @@ RSpec.describe 'Merchant invoices show page', type: :feature do
     @order5 = @balm.invoice_items.create!(quantity: 3, unit_price: 4599, status: "Shipped", invoice_id: @invoice3.id)
     @order6 = @necklace.invoice_items.create!(quantity: 1, unit_price: 3045, status: "Pending", invoice_id: @invoice3.id)
     @order7 = @beard.invoice_items.create!(quantity: 1, unit_price: 5099, status: "Packaged", invoice_id: @invoice4.id)
+
+    @ten = @billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
   end
 
   it 'displays all the information pertaining to an invoice', :vcr do
@@ -120,5 +122,11 @@ RSpec.describe 'Merchant invoices show page', type: :feature do
       expect(page.has_select?(:status, selected: "Pending")).to eq(false)
       expect(page.has_select?(:status, selected: "Packaged")).to eq(true)
     end
+  end
+  it 'displays discounted revenue as well as total merchant revenue' do
+    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+
+    expect(page).to have_content("Total Revenue: 110.11")
+    expect(page).to have_content("Total Discounted Revenue: 100.10")
   end
 end
