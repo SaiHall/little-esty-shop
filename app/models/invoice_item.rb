@@ -16,10 +16,16 @@ class InvoiceItem < ApplicationRecord
     item.merchant == merchant
   end
 
+  def indiv_discount
+    bulk_discounts.where('threshold <= ?', quantity)
+      .order(percentage: :desc).first || 0
+  end
+
   def self.discounted_difference
     joins(:bulk_discounts)
       .where('invoice_items.quantity >= threshold')
-      .select('invoice_items.*, percentage')
+      .select('invoice_items.*, indiv_discount.percentage')
+      .distinct
       .sum('((invoice_items.unit_price * quantity) * percentage)') * 0.01.to_f
   end
 end
