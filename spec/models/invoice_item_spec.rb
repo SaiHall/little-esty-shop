@@ -33,23 +33,34 @@ RSpec.describe InvoiceItem, type: :model do
   end
 
   describe "instance methods" do
-    it "converts unit price into dollar format" do
+    xit "converts unit price into dollar format" do
       expect(@invoice_items_1.price_convert).to eq(10.01)
     end
 
-    it 'belongs to merchant returns true if an invoice item belongs to the given merchant' do
+    xit 'belongs to merchant returns true if an invoice item belongs to the given merchant' do
 
       expect(@invoice_items_1.belongs_to_merchant(@billman)).to eq(true)
     end
 
-    it 'belongs to merchant returns false if an invoice item does not belong to the given merchant' do
+    xit 'belongs to merchant returns false if an invoice item does not belong to the given merchant' do
 
       expect(@invoice_items_1.belongs_to_merchant(@parker)).to eq(false)
     end
 
-    it 'can show the amount discounted from an invoice_item' do
+    xit 'can show the amount discounted from an invoice_item' do
 
       expect(@invoice1.invoice_items.discounted_difference).to eq(10.01)
+    end
+
+    it 'can return the best discount' do
+      order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id) #25.025 off at 25%/ 10.01 off at 10%
+      @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+      expect(order3.indiv_discount.percentage).to eq(0.25)
+    end
+    xit 'can select the correct discount if multiple may apply' do
+      order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id) #25.025 off at 25%/ 10.01 off at 10%
+      @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+      expect(@invoice1.invoice_items.discounted_difference).to eq(35.04)
     end
   end
 end
