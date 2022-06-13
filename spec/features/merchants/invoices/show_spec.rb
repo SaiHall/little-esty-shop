@@ -143,4 +143,16 @@ RSpec.describe 'Merchant invoices show page', type: :feature do
     expect(page).to_not have_content("Total Discounted Revenue: 121.8")
     expect(page).to_not have_content("Total Discounted Revenue: 206.96")
   end
+
+  it 'has a link next to discounted items to that discounts show page' do
+    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+
+    within "#invoiceItem-#{@order1.id}" do
+      expect(page).to_not have_link("Show Discount")
+    end
+
+    within "#invoiceItem-#{@order2.id}" do
+      expect(page).to have_link("Show Discount")
+    end
+  end
 end
