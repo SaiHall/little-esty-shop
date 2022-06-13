@@ -60,13 +60,14 @@ RSpec.describe Invoice, type: :model do
       invoice_2 = customer_1.invoices.create!(status: "in progress")
 
       invoice_items_1 = bracelet.invoice_items.create!(quantity: 1, unit_price: 1001, status: "Pending", invoice_id: invoice_1.id)
-      invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id)
+      invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id) #50.05
       invoice_items_3 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_1.id)
-      invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id)
+      invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id) # 15.02
 
       billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
       billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
       expect(invoice_1.discounted_revenue.round(2)).to eq(235.24)
+      expect(invoice_2.discounted_revenue.round(2)).to eq(285.29)#350.35 - 65.07
     end
   end
 end
