@@ -129,7 +129,7 @@ RSpec.describe 'Merchant Show Dash' do
       end
     end
   end
-  it 'has a link to visit that merchants discount index' do
+  it 'has a link to visit that merchants discount index', :vcr do
     visit "/merchants/#{@billman.id}/dashboard"
 
     expect(page).to have_link("View Discounts")
