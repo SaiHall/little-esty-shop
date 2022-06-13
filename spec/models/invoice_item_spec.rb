@@ -60,7 +60,7 @@ RSpec.describe InvoiceItem, type: :model do
     it 'can select the correct discount if multiple may apply' do
       order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id) #25.025 off at 25%/ 10.01 off at 10%
       @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
-      expect(@invoice1.invoice_items.discounted_difference).to eq(35.035)
+      expect(@invoice1.invoice_items.discounted_difference.round(2)).to eq(35.04)
     end
   end
 end
