@@ -57,10 +57,27 @@ RSpec.describe InvoiceItem, type: :model do
       @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
       expect(order3.indiv_discount.percentage).to eq(0.25)
     end
+
     it 'can select the correct discount if multiple may apply' do
       order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id) #25.025 off at 25%/ 10.01 off at 10%
       @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
       expect(@invoice1.invoice_items.discounted_difference.round(2)).to eq(35.04)
+    end
+
+    it 'can return zero if no discount applies' do
+      expect(@order1.indiv_discount).to eq(0)
+    end
+
+    it 'can return false if no discount is applied' do
+      expect(@order1.discounted?).to eq(false)
+    end
+
+    it 'can return false if no discount is applied' do
+      expect(@order2.discounted?).to eq(true)
+    end
+
+    it 'can return a discounts id' do
+      expect(@order2.indiv_discount.id).to eq(@ten.id)
     end
   end
 end
