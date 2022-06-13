@@ -29,6 +29,11 @@ class Merchant < ApplicationRecord
     invoice_items.where(invoice_items: {invoice_id: invoice.id} ).sum('invoice_items.unit_price * quantity')* 0.01.to_f
   end
 
+  def discounted_revenue(invoice)
+    my_total_revenue(invoice) - (invoice_items.where(invoice_items: {invoice_id: invoice.id})).discounted_difference
+  end
+
+
   def top_5_items
     items.joins(invoices: :transactions)
     .where(transactions: {result: 'success'})
