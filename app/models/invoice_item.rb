@@ -24,8 +24,8 @@ class InvoiceItem < ApplicationRecord
   def self.discounted_difference
     joins(:bulk_discounts)
       .where('invoice_items.quantity >= threshold')
-      .select('invoice_items.*, indiv_discount.percentage')
-      .distinct
-      .sum('((invoice_items.unit_price * quantity) * percentage)') * 0.01.to_f
+      .select("invoice_items.*, max(percentage) as perc")
+      .group(:id)
+      .sum{|obj| ((obj.unit_price * obj.quantity) * (obj.perc.to_f)) * 0.01}
   end
 end

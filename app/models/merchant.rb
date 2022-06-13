@@ -30,17 +30,9 @@ class Merchant < ApplicationRecord
   end
 
   def discounted_revenue(invoice)
-    my_total_revenue(invoice) - invoice_items.where(invoice_items: {invoice_id: invoice.id}).discounted_difference
+    my_total_revenue(invoice) - (invoice_items.where(invoice_items: {invoice_id: invoice.id})).discounted_difference
   end
 
-  # def discounted_revenue
-  #   x = bulk_discounts.joins(:invoice_items)
-  #                     .where('invoice_items.quantity >= threshold')
-  #                     .select('invoice_items.*, percentage')
-  #                     binding.pry
-  #                     .sum('(invoice_items.unit_price * quantity) - ((invoice_items.unit_price * quantity) * percentage)')
-  #   binding.pry
-  # end
 
   def top_5_items
     items.joins(invoices: :transactions)
