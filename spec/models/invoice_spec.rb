@@ -46,5 +46,26 @@ RSpec.describe Invoice, type: :model do
     it "can order invoices by date desc" do
       expect(Invoice.oldest_first).to eq([@invoice_3,@invoice_2, @invoice_1])
     end
+
+    it 'can return a discounted revenue' do
+      billman = Merchant.create!(name: "Billman")
+      bracelet = billman.items.create!(name: "Bracelet", description: "shiny", unit_price: 1001)
+      mood = billman.items.create!(name: "Mood Ring", description: "Moody", unit_price: 2002)
+      necklace = billman.items.create!(name: "Necklace", description: "Sparkly", unit_price: 3045)
+
+      customer_1 = Customer.create!(first_name: 'Jimbob', last_name: "Dudeguy")
+
+      invoice_1 = customer_1.invoices.create!(status: "cancelled")
+      invoice_2 = customer_1.invoices.create!(status: "in progress")
+
+      invoice_items_1 = bracelet.invoice_items.create!(quantity: 1, unit_price: 1001, status: "Pending", invoice_id: invoice_1.id)
+      invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id)
+      invoice_items_3 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_1.id)
+      invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id)
+
+      billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+      billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
+      expect(invoice_1.discounted_revenue).to eq(235.23)
+    end
   end
 end
