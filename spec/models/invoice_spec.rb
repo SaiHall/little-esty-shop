@@ -50,6 +50,8 @@ RSpec.describe Invoice, type: :model do
 
     it 'can return a discounted revenue' do
       billman = Merchant.create!(name: "Billman")
+      parker = Merchant.create!(name: "Parker")
+      beard = parker.items.create!(name: "Beard Oil", description: "Lavendar Scented", unit_price: 6045)
       bracelet = billman.items.create!(name: "Bracelet", description: "shiny", unit_price: 1001)
       mood = billman.items.create!(name: "Mood Ring", description: "Moody", unit_price: 2002)
       necklace = billman.items.create!(name: "Necklace", description: "Sparkly", unit_price: 3045)
@@ -58,16 +60,20 @@ RSpec.describe Invoice, type: :model do
 
       invoice_1 = customer_1.invoices.create!(status: "cancelled")
       invoice_2 = customer_1.invoices.create!(status: "in progress")
+      invoice_3 = customer_1.invoices.create!(status: "in progress")
 
       invoice_items_1 = bracelet.invoice_items.create!(quantity: 1, unit_price: 1001, status: "Pending", invoice_id: invoice_1.id)
       invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id) #50.05
       invoice_items_3 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_1.id)
       invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id) # 15.02
+      invoice_items_4 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_3.id) # 75.08
+      invoice_items_4 = beard.invoice_items.create!(quantity: 5, unit_price: 6045, status: "Pending", invoice_id: invoice_3.id) #should not get discounted
 
       billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
       billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
       expect(invoice_1.discounted_revenue.round(2)).to eq(235.24)
       expect(invoice_2.discounted_revenue.round(2)).to eq(285.29)#350.35 - 65.07
+      expect(invoice_3.discounted_revenue.round(2)).to eq(527.48)# 302.25 + 225.22 ~ my rounding
     end
   end
 end
