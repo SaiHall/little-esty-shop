@@ -158,10 +158,21 @@ RSpec.describe 'Merchant invoices show page', type: :feature do
 
   it 'has a functioning link to discount applied' do
     visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
-    
+
     within "#invoiceItem-#{@order2.id}" do
       click_link("Show Discount")
       expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
+    end
+  end
+
+  it 'has a link to the correct discount, if multiple may appply' do
+    order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id)
+    twentyfive = @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+
+    within "#invoiceItem-#{order3.id}" do
+      click_link("Show Discount")
+      expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{twentyfive.id}")
     end
   end
 end
