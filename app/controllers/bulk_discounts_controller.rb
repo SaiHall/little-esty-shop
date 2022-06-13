@@ -1,4 +1,5 @@
 class BulkDiscountsController < ApplicationController
+  before_action :holiday_info, only: [:index]
 
   def index
     @merchant = Merchant.find(params[:merchant_id])
@@ -32,6 +33,10 @@ class BulkDiscountsController < ApplicationController
     discount = BulkDiscount.find(params[:id])
     discount.update!(bd_params)
     redirect_to merchant_bulk_discount_path(params[:merchant_id], discount)
+  end
+
+  def holiday_info
+    @holiday = HolidayFacade.rate_limit_error_backup
   end
 
   private
