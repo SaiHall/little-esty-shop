@@ -94,10 +94,20 @@ RSpec.describe 'bulk discount index' do
     visit merchant_bulk_discounts_path(@billman)
     within "#upcomingHolidays" do
       expect(page).to have_content("Juneteenth")
-      expect(page).to have_content("Independance Day")
-      expect(page).to have_content("Labor Day")
+      expect(page).to have_content("Independence Day")
+      expect(page).to have_content("Labour Day")
       expect(page).to_not have_content("Memorial Day")
       expect(page).to_not have_content("Columbus Day")
+    end
+  end
+
+  it 'has the next three holidays dates listed on the page', :vcr do
+    visit merchant_bulk_discounts_path(@billman)
+    within "#upcomingHolidays" do
+      expect(page).to have_content("2022-06-20")
+      expect(page).to have_content("2022-07-04")
+      expect(page).to have_content("2022-09-05")
+      expect(page).to_not have_content("2023-05-29")
     end
   end
 end
