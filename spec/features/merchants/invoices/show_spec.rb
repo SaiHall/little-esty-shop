@@ -124,55 +124,59 @@ RSpec.describe 'Merchant invoices show page', type: :feature do
       expect(page.has_select?(:status, selected: "Packaged")).to eq(true)
     end
   end
-  it 'displays discounted revenue as well as total merchant revenue' do
-    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
 
-    expect(page).to have_content("Total Revenue: 110.11")
-    expect(page).to have_content("Total Discounted Revenue: 100.1")
-  end
-  it 'displays discounted revenue only for the viewing merchant' do
-    invoice6 = @brenda.invoices.create!(status: "Completed")
-    order8 = @balm.invoice_items.create!(quantity: 5, unit_price: 4599, status: "Shipped", invoice_id: invoice6.id) #229.95 - 22.995 = 206.955
-    order9 = @necklace.invoice_items.create!(quantity: 5, unit_price: 3045, status: "Pending", invoice_id: invoice6.id) #152.25 - 15.225 = 137.03
-    @parker.bulk_discounts.create!(percentage: 0.10, threshold: 5)
-    visit "/merchants/#{@billman.id}/invoices/#{invoice6.id}"
+  describe 'discounts:' do
+    it 'displays discounted revenue as well as total merchant revenue' do
+      visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
 
-    expect(page).to have_content("Total Revenue: 152.25")
-    expect(page).to have_content("Total Discounted Revenue: 137.03")
-    expect(page).to_not have_content("Total Discounted Revenue: 129.26")
-    expect(page).to_not have_content("Total Discounted Revenue: 121.8")
-    expect(page).to_not have_content("Total Discounted Revenue: 206.96")
-  end
-
-  it 'has a link next to discounted items to that discounts show page' do
-    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
-
-    within "#invoiceItem-#{@order1.id}" do
-      expect(page).to_not have_link("Show Discount")
+      expect(page).to have_content("Total Revenue: 110.11")
+      expect(page).to have_content("Total Discounted Revenue: 100.1")
     end
 
-    within "#invoiceItem-#{@order2.id}" do
-      expect(page).to have_link("Show Discount")
+    it 'displays discounted revenue only for the viewing merchant' do
+      invoice6 = @brenda.invoices.create!(status: "Completed")
+      order8 = @balm.invoice_items.create!(quantity: 5, unit_price: 4599, status: "Shipped", invoice_id: invoice6.id) #229.95 - 22.995 = 206.955
+      order9 = @necklace.invoice_items.create!(quantity: 5, unit_price: 3045, status: "Pending", invoice_id: invoice6.id) #152.25 - 15.225 = 137.03
+      @parker.bulk_discounts.create!(percentage: 0.10, threshold: 5)
+      visit "/merchants/#{@billman.id}/invoices/#{invoice6.id}"
+
+      expect(page).to have_content("Total Revenue: 152.25")
+      expect(page).to have_content("Total Discounted Revenue: 137.03")
+      expect(page).to_not have_content("Total Discounted Revenue: 129.26")
+      expect(page).to_not have_content("Total Discounted Revenue: 121.8")
+      expect(page).to_not have_content("Total Discounted Revenue: 206.96")
     end
-  end
 
-  it 'has a functioning link to discount applied' do
-    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+    it 'has a link next to discounted items to that discounts show page' do
+      visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
 
-    within "#invoiceItem-#{@order2.id}" do
-      click_link("Show Discount")
-      expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
+      within "#invoiceItem-#{@order1.id}" do
+        expect(page).to_not have_link("Show Discount")
+      end
+
+      within "#invoiceItem-#{@order2.id}" do
+        expect(page).to have_link("Show Discount")
+      end
     end
-  end
 
-  it 'has a link to the correct discount, if multiple may appply' do
-    order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id)
-    twentyfive = @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
-    visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+    it 'has a functioning link to discount applied' do
+      visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
 
-    within "#invoiceItem-#{order3.id}" do
-      click_link("Show Discount")
-      expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{twentyfive.id}")
+      within "#invoiceItem-#{@order2.id}" do
+        click_link("Show Discount")
+        expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
+      end
+    end
+
+    it 'has a link to the correct discount, if multiple may appply' do
+      order3 = @bracelet.invoice_items.create!(quantity: 10, unit_price: 1001, status: "Packaged", invoice_id: @invoice1.id)
+      twentyfive = @billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+      visit "/merchants/#{@billman.id}/invoices/#{@invoice1.id}"
+
+      within "#invoiceItem-#{order3.id}" do
+        click_link("Show Discount")
+        expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{twentyfive.id}")
+      end
     end
   end
 end

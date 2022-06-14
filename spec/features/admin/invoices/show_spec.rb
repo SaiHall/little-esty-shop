@@ -56,28 +56,29 @@ RSpec.describe "Admin Invoice Show Page" do
     expect(current_path).to eq(admin_invoice_path(@invoice_1))
     expect(page).to have_content("Invoice Status: in progress")
   end
+  describe 'discounts:' do
+    it 'can show total revenue and discounted revenue' do
+      billman = Merchant.create!(name: "Billman")
+      bracelet = billman.items.create!(name: "Bracelet", description: "shiny", unit_price: 1001)
+      mood = billman.items.create!(name: "Mood Ring", description: "Moody", unit_price: 2002)
+      necklace = billman.items.create!(name: "Necklace", description: "Sparkly", unit_price: 3045)
 
-  it 'can show total revenue and discounted revenue' do
-    billman = Merchant.create!(name: "Billman")
-    bracelet = billman.items.create!(name: "Bracelet", description: "shiny", unit_price: 1001)
-    mood = billman.items.create!(name: "Mood Ring", description: "Moody", unit_price: 2002)
-    necklace = billman.items.create!(name: "Necklace", description: "Sparkly", unit_price: 3045)
+      customer_1 = Customer.create!(first_name: 'Jimbob', last_name: "Dudeguy")
 
-    customer_1 = Customer.create!(first_name: 'Jimbob', last_name: "Dudeguy")
+      invoice_1 = customer_1.invoices.create!(status: "cancelled")
+      invoice_2 = customer_1.invoices.create!(status: "in progress")
 
-    invoice_1 = customer_1.invoices.create!(status: "cancelled")
-    invoice_2 = customer_1.invoices.create!(status: "in progress")
+      invoice_items_1 = bracelet.invoice_items.create!(quantity: 1, unit_price: 1001, status: "Pending", invoice_id: invoice_1.id)
+      invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id)
+      invoice_items_3 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_1.id)
+      invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id)
 
-    invoice_items_1 = bracelet.invoice_items.create!(quantity: 1, unit_price: 1001, status: "Pending", invoice_id: invoice_1.id)
-    invoice_items_2 = mood.invoice_items.create!(quantity: 10, unit_price: 2002, status: "Pending", invoice_id: invoice_2.id)
-    invoice_items_3 = necklace.invoice_items.create!(quantity: 10, unit_price: 3003, status: "Pending", invoice_id: invoice_1.id)
-    invoice_items_4 = necklace.invoice_items.create!(quantity: 5, unit_price: 3003, status: "Pending", invoice_id: invoice_2.id)
+      billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
+      billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
+      visit admin_invoice_path(invoice_1)
 
-    billman.bulk_discounts.create!(percentage: 0.25, threshold: 10)
-    billman.bulk_discounts.create!(percentage: 0.10, threshold: 5)
-    visit admin_invoice_path(invoice_1)
-
-    expect(page).to have_content("Total Revenue from this Invoice: $310.31")
-    expect(page).to have_content("Total Discounted Revenue from this Invoice: $235.24") #discount 75.08
+      expect(page).to have_content("Total Revenue from this Invoice: $310.31")
+      expect(page).to have_content("Total Discounted Revenue from this Invoice: $235.24") #discount 75.08
+    end
   end
 end
