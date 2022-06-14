@@ -11,11 +11,10 @@ RSpec.describe 'bulk discount index' do
     @fifty = @billman.bulk_discounts.create!(percentage: 0.50, threshold: 30)
 
     @five = @parker.bulk_discounts.create!(percentage: 0.05, threshold: 45)
+    visit merchant_bulk_discounts_path(@billman)
   end
 
   it 'lists all of a merchants bulk discounts percentages (formatted)', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     expect(page).to have_content(@ten.percentage * 100)
     expect(page).to have_content(@twenty.percentage * 100)
     expect(page).to have_content(@fifty.percentage * 100)
@@ -24,8 +23,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'lists all of a merchants bulk discounts thresholds', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     expect(page).to have_content(@ten.threshold)
     expect(page).to have_content(@twenty.threshold)
     expect(page).to have_content(@fifty.threshold)
@@ -34,8 +31,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has links next to each discount', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     expect(page.all('.discountDetails')[0]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[1]).to have_link("View This Discount")
     expect(page.all('.discountDetails')[2]).to have_link("View This Discount")
@@ -43,8 +38,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has links that lead to indiv show pages next to discounts', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     within page.all('.discountDetails')[0] do
       click_link("View This Discount")
       expect(page).to have_current_path("/merchants/#{@billman.id}/bulk_discounts/#{@ten.id}")
@@ -59,8 +52,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has a link to create a new discount', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     expect(page).to have_link("Create New Discount")
     click_link("Create New Discount")
 
@@ -68,8 +59,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has a link to delete each discount', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     expect(page.all('.discountDetails')[0]).to have_link("Delete This Discount")
     expect(page.all('.discountDetails')[1]).to have_link("Delete This Discount")
     expect(page.all('.discountDetails')[2]).to have_link("Delete This Discount")
@@ -77,8 +66,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'can delete a discount with the link', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
-
     within page.all('.discountDetails')[2] do
       click_link("Delete This Discount")
     end
@@ -91,7 +78,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has the next three holidays listed on the page', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
     within "#upcomingHolidays" do
       expect(page).to have_content("Juneteenth")
       expect(page).to have_content("Independence Day")
@@ -102,7 +88,6 @@ RSpec.describe 'bulk discount index' do
   end
 
   it 'has the next three holidays dates listed on the page', :vcr do
-    visit merchant_bulk_discounts_path(@billman)
     within "#upcomingHolidays" do
       expect(page).to have_content("2022-06-20")
       expect(page).to have_content("2022-07-04")
